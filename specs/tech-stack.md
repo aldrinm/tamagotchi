@@ -33,7 +33,7 @@ This document captures what we still need from the implementation and the key de
 4. **Persistence schema**
    - Store stats + `lastUpdatedAt` timestamp in `localStorage` (simple JSON is fine).
 5. **Testing approach**
-   - Unit-test tick/action/state rules (even with minimal tooling) to keep behavior stable as thresholds change.
+   - Standardize on `Jest` as the test runner/framework for unit and component tests.
 6. **Build/deploy**
    - How you will run/build the Angular 21 app (dev server, static host, etc.).
 
@@ -52,4 +52,31 @@ Baseline for this project:
   - decay/tick: Hunger `-2`, Happiness `-2`, Energy `-1`
   - action deltas: Feed `(H+18, Ha+2, E+0)`, Play `(Ha+18, E-4, H-2)`, Rest `(E+20, H-2, Ha+0)`
   - state thresholds: `GOOD_RANGE_MIN = 40`, `EVOLVE_THRESHOLD = 90`, sustain windows = `15s`
+
+## Automated Testing Frameworks and Guidelines
+
+### Frameworks
+
+- **Chosen stack:** `Jest`
+  - use as the default framework for unit and component tests
+  - run in CI with non-watch mode
+  - use fake timers for time-based rules (`jest.useFakeTimers()`)
+- **Timer control requirement:**
+  - use deterministic timer controls for tick/sustain logic
+  - prefer fake timers over real-time waits
+
+### Guidelines
+
+- **Test pyramid emphasis**
+  - prioritize unit tests for core game logic and state transitions
+  - keep component tests lightweight and focused on wiring
+- **Architecture for testability**
+  - keep gameplay rules in pure functions/services, separate from DOM concerns
+  - isolate persistence in a dedicated adapter/service layer
+- **Deterministic behavior**
+  - avoid real-time sleeps/timeouts in tests
+  - inject or mock time sources where possible
+- **Project organization**
+  - colocate `*.spec.ts` files with game logic modules and key UI wiring modules
+  - keep test naming aligned with behavior-oriented language
 
