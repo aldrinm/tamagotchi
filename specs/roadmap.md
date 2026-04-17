@@ -3,7 +3,7 @@
 This roadmap breaks implementation into small, testable phases aligned with `README.md`:
 `Living Vitals` -> `Care Loop` -> `Dynamic States` -> `Personal Touches`.
 
-## Phase 0: Foundations (no gameplay yet)
+## Phase 0: Foundations (no gameplay yet) - Complete
 
 - Create the project skeleton (whatever tech stack you choose).
 - Add a minimal app shell that can render a “pet” area on screen.

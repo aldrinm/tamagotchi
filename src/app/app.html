@@ -1,0 +1,17 @@
+<main class="app-shell">
+  <header>
+    <h1>{{ title }}</h1>
+    <p>Phase 0 foundations with placeholder vitals.</p>
+  </header>
+
+  <section class="pet-card" aria-label="Pet area">
+    <h2>{{ pet.name }}</h2>
+    <p class="state-indicator" aria-label="Current pet state">State: {{ state }}</p>
+
+    <ul class="vitals" aria-label="Pet vitals">
+      <li>Hunger: {{ stats.hunger }}</li>
+      <li>Happiness: {{ stats.happiness }}</li>
+      <li>Energy: {{ stats.energy }}</li>
+    </ul>
+  </section>
+</main>

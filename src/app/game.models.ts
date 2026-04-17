@@ -1,0 +1,21 @@
+export type PetState = 'Normal' | 'Sick' | 'Evolved';
+
+export interface Stats {
+  hunger: number;
+  happiness: number;
+  energy: number;
+}
+
+export interface Pet {
+  name: string;
+  evolutionName: string;
+  recoveryFormName: string;
+}
+
+export interface GameSnapshot {
+  pet: Pet;
+  stats: Stats;
+  state: PetState;
+  lastUpdatedAt: number;
+}
+
