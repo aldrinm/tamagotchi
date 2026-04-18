@@ -48,6 +48,57 @@ describe('GameService', () => {
     expect(service.stats().energy).toBe(0);
   });
 
+  describe('Actions', () => {
+    beforeEach(() => {
+      // Set predictable stats for testing actions
+      service.applyDecay(25); // Set stats to ~50 range
+      vi.clearAllMocks();
+    });
+
+    it('should apply Feed action correctly', () => {
+      const before = service.stats();
+      service.feed();
+      const delta = { hunger: 18, happiness: 2, energy: 0 };
+      
+      expect(service.stats().hunger).toBe(Math.min(100, before.hunger + delta.hunger));
+      expect(service.stats().happiness).toBe(Math.min(100, before.happiness + delta.happiness));
+      expect(service.stats().energy).toBe(Math.min(100, before.energy + delta.energy));
+      expect(persistenceService.saveState).toHaveBeenCalled();
+    });
+
+    it('should apply Play action correctly', () => {
+      const before = service.stats();
+      service.play();
+      const delta = { hunger: -2, happiness: 18, energy: -4 };
+      
+      expect(service.stats().hunger).toBe(Math.max(0, before.hunger + delta.hunger));
+      expect(service.stats().happiness).toBe(Math.min(100, before.happiness + delta.happiness));
+      expect(service.stats().energy).toBe(Math.max(0, before.energy + delta.energy));
+      expect(persistenceService.saveState).toHaveBeenCalled();
+    });
+
+    it('should apply Rest action correctly', () => {
+      const before = service.stats();
+      service.rest();
+      const delta = { hunger: -2, happiness: 0, energy: 20 };
+      
+      expect(service.stats().hunger).toBe(Math.max(0, before.hunger + delta.hunger));
+      expect(service.stats().happiness).toBe(before.happiness);
+      expect(service.stats().energy).toBe(Math.min(100, before.energy + delta.energy));
+      expect(persistenceService.saveState).toHaveBeenCalled();
+    });
+
+    it('should clamp stats at 100 after actions', () => {
+      // Set stats to 95
+      service.applyDecay(-50); // This isn't how it works, let's just use feed repeatedly
+      for (let i = 0; i < 10; i++) service.feed();
+      
+      expect(service.stats().hunger).toBe(100);
+      expect(service.stats().happiness).toBe(100);
+      expect(service.stats().energy).toBe(100);
+    });
+  });
+
   describe('Initialization', () => {
     it('should catch up on missed ticks during initialization', () => {
       const now = Date.now();

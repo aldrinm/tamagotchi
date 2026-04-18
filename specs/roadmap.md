@@ -50,7 +50,7 @@ Exit criteria:
 - Stats visibly decrease over time.
 - Refreshing does not reset meters unfairly (uses elapsed-time catch-up + `localStorage`).
 
-## Phase 2: Care Loop (Feed / Play / Rest)
+## Phase 2: Care Loop (Feed / Play / Rest) - Complete
 
 - Add actions:
   - `Feed`: `Hunger +18`, `Happiness +2`, `Energy +0`

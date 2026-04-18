@@ -28,4 +28,16 @@ export class App implements OnInit, OnDestroy {
   protected get pet() { return this.gameService.pet(); }
   protected get stats() { return this.gameService.stats(); }
   protected get state() { return this.gameService.state(); }
+
+  protected feed(): void {
+    this.gameService.feed();
+  }
+
+  protected play(): void {
+    this.gameService.play();
+  }
+
+  protected rest(): void {
+    this.gameService.rest();
+  }
 }

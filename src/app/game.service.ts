@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Pet, PetState, Stats, GameSnapshot } from './game.models';
-import { TICK_INTERVAL_SECONDS, TICK_DECAY } from './game.constants';
+import { TICK_INTERVAL_SECONDS, TICK_DECAY, ACTION_DELTAS } from './game.constants';
 import { PersistenceService } from './persistence.service';
 
 @Injectable({
@@ -50,6 +50,31 @@ export class GameService {
 
   tick(): void {
     this.applyDecay(1);
+  }
+
+  feed(): void {
+    this.applyActionDelta(ACTION_DELTAS.feed);
+  }
+
+  play(): void {
+    this.applyActionDelta(ACTION_DELTAS.play);
+  }
+
+  rest(): void {
+    this.applyActionDelta(ACTION_DELTAS.rest);
+  }
+
+  private applyActionDelta(delta: { hunger: number; happiness: number; energy: number }): void {
+    const current = this.stats();
+    const next: Stats = {
+      hunger: this.clamp(current.hunger + delta.hunger),
+      happiness: this.clamp(current.happiness + delta.happiness),
+      energy: this.clamp(current.energy + delta.energy),
+    };
+
+    this.stats.set(next);
+    this.lastUpdatedAt.set(new Date().toISOString());
+    this.save();
   }
 
   applyDecay(ticks: number): void {

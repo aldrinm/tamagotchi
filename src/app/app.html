@@ -1,7 +1,7 @@
 <main class="app-shell">
   <header>
     <h1>Tamagotchi</h1>
-    <p>Phase 1: Living Vitals (Ticking Meters)</p>
+    <p>Phase 2: Care Loop (Feed / Play / Rest)</p>
   </header>
 
   <section class="pet-card" aria-label="Pet area">
@@ -31,5 +31,11 @@
         <span>{{ stats.energy }}%</span>
       </li>
     </ul>
+
+    <div class="actions" aria-label="Pet actions">
+      <button (click)="feed()" aria-label="Feed the pet">Feed</button>
+      <button (click)="play()" aria-label="Play with the pet">Play</button>
+      <button (click)="rest()" aria-label="Let the pet rest">Rest</button>
+    </div>
   </section>
 </main>

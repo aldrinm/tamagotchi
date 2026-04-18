@@ -80,3 +80,66 @@ header p {
   height: 100%;
   transition: width 0.3s ease;
 }
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.actions button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
+}
+
+.actions button:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.actions button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(74, 144, 226, 0.2);
+}
+
+.actions button[aria-label="Feed the pet"] {
+  background: #ff9800;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
+.actions button[aria-label="Feed the pet"]:hover {
+  background: #f57c00;
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+}
+
+.actions button[aria-label="Play with the pet"] {
+  background: #e91e63;
+  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.2);
+}
+
+.actions button[aria-label="Play with the pet"]:hover {
+  background: #c2185b;
+  box-shadow: 0 4px 8px rgba(233, 30, 99, 0.3);
+}
+
+.actions button[aria-label="Let the pet rest"] {
+  background: #4caf50;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+.actions button[aria-label="Let the pet rest"]:hover {
+  background: #388e3c;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
