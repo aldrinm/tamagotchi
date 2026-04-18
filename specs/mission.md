@@ -46,6 +46,10 @@ Build a cute/wholesome digital companion, `tamagotchi`, that feels alive and fun
 
 To keep gameplay simple but expressive, state is derived from the three vitals and (optionally) short sustained windows.
 
+State precedence (deterministic):
+- `Evolved` > `Sick` > `Normal`
+- If multiple state conditions are simultaneously true, choose the highest-precedence state.
+
 Default values:
 - `GOOD_RANGE_MIN = 40`
 - `EVOLVE_THRESHOLD = 90`
@@ -67,16 +71,19 @@ These defaults are chosen for casual ~1-minute visits and can be tuned later aft
   - `Rest`: `Energy +20`, `Hunger -2`, `Happiness +0`
 - Clamp rule:
   - all vitals are clamped to `[0, 100]` after every tick and action
+- Sustain timer model: sustain windows are always measured with tick timers (not wall-clock timers).
 
 - **Sick**
   - Trigger condition: if **any** vital falls below `GOOD_RANGE_MIN = 40`, the pet becomes `Sick`.
   - Recovery path: once all vitals are back in their good range, the pet returns to `Normal` after a short continuous sustain window.
   - Default sustain window: `RECOVERY_SUSTAIN_SECONDS = 15`.
 
+
 - **Evolved**
   - Threshold condition: **all three vitals must reach 90+** (set by `EVOLVE_THRESHOLD = 90`).
   - Timing condition: after reaching those levels, the pet becomes `Evolved` only after staying in the qualifying range for a sustained window.
   - Default sustain window: `EVOLVE_SUSTAIN_SECONDS = 15`.
+  - Lifecycle rule: `Evolved` is terminal for a run; once evolved, the pet cannot de-evolve.
 
 All thresholds/timing are intentionally tunable to achieve the “reasonable time” feel for casual 1-minute visits.
 

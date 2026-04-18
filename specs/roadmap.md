@@ -39,9 +39,12 @@ Exit criteria:
 - Use elapsed-time catch-up:
   - store `lastUpdatedAt`
   - on app load (and after any downtime), compute how much time passed and apply decay accordingly
+  - conversion rule: `elapsedTicks = floor(elapsedSeconds / TICK_INTERVAL_SECONDS)`
+  - apply decay using `elapsedTicks` only (deterministic floor behavior)
 - Ensure values clamp to `[0, 100]`.
 - Persist state locally:
   - store stats + `lastUpdatedAt` in `localStorage`
+  - store and read `lastUpdatedAt` as an ISO 8601 datetime string
 
 Exit criteria:
 - Stats visibly decrease over time.
@@ -64,10 +67,13 @@ Exit criteria:
 
 - Implement a deterministic mapping from current stats to pet state:
   - `Normal` / `Sick` / `Evolved`
+  - state precedence must be `Evolved` > `Sick` > `Normal`
 - Timing rules:
   - `Sick` activates when **any** vital falls below `GOOD_RANGE_MIN = 40`.
   - `Normal` recovery activates only after **all** vitals are back in good range for `RECOVERY_SUSTAIN_SECONDS = 15`.
   - `Evolved` activates when all vitals are >= `EVOLVE_THRESHOLD` for `EVOLVE_SUSTAIN_SECONDS = 15`.
+  - sustain windows are always measured using tick timers (not wall-clock timers)
+  - once `Evolved`, the pet cannot de-evolve
 - Ensure state changes happen immediately after:
   - applying elapsed-time decay, and
   - executing any action
@@ -91,6 +97,7 @@ Exit criteria:
 ## Phase 5: Quality Pass (polish without scope creep)
 
 - Tune tick/action/state thresholds for “fun” pacing.
+- Apply the [Testing Strategy](file:///c:/Aldrin/projects/aldrinm/tamagotchi/specs/testing-strategy.md) (Automated + Manual).
 - Verify casual pacing:
   - common 1-minute visits should produce noticeable but not punishing changes
 - Add minimal safeguards:

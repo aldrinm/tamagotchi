@@ -16,6 +16,6 @@ export interface GameSnapshot {
   pet: Pet;
   stats: Stats;
   state: PetState;
-  lastUpdatedAt: number;
+  lastUpdatedAt: string;
 }
 

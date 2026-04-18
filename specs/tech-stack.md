@@ -30,10 +30,12 @@ This document captures what we still need from the implementation and the key de
    - Pick a tick interval that feels good in ~1 minute visits (e.g., tick every N seconds).
 3. **Elapsed-time catch-up**
    - On app load, compute time since last update so meters decay correctly even if the tab was inactive.
+   - Conversion rule: `elapsedTicks = floor(elapsedSeconds / TICK_INTERVAL_SECONDS)`.
 4. **Persistence schema**
    - Store stats + `lastUpdatedAt` timestamp in `localStorage` (simple JSON is fine).
+   - Persist and parse timestamps in ISO 8601 datetime format.
 5. **Testing approach**
-   - Standardize on `Jest` as the test runner/framework for unit and component tests.
+   - Standardize on `Vitest` as the test runner/framework for unit and component tests.
 6. **Build/deploy**
    - How you will run/build the Angular 21 app (dev server, static host, etc.).
 
@@ -45,6 +47,9 @@ Baseline for this project:
   - Angular components for meters, action buttons, and the state indicator.
 - **Client-side state + derived state**
   - Keep stats as source-of-truth; compute `Normal`/`Sick`/`Evolved` from stats + sustained windows.
+  - State precedence is deterministic: `Evolved` > `Sick` > `Normal`.
+  - Sustain windows are measured with tick timers.
+  - `Evolved` is terminal for a run (no de-evolution).
 - **Client-side persistence**
   - Use `localStorage` for stats and last-update time.
 - **Default gameplay constants (initial baseline)**
@@ -52,18 +57,21 @@ Baseline for this project:
   - decay/tick: Hunger `-2`, Happiness `-2`, Energy `-1`
   - action deltas: Feed `(H+18, Ha+2, E+0)`, Play `(Ha+18, E-4, H-2)`, Rest `(E+20, H-2, Ha+0)`
   - state thresholds: `GOOD_RANGE_MIN = 40`, `EVOLVE_THRESHOLD = 90`, sustain windows = `15s`
+  - elapsed-time catch-up uses floor when converting elapsed time to ticks
 
 ## Automated Testing Frameworks and Guidelines
 
 ### Frameworks
 
-- **Chosen stack:** `Jest`
+- **Chosen stack:** `Vitest`
   - use as the default framework for unit and component tests
   - run in CI with non-watch mode
-  - use fake timers for time-based rules (`jest.useFakeTimers()`)
+  - use fake timers for time-based rules (`vi.useFakeTimers()`)
 - **Timer control requirement:**
   - use deterministic timer controls for tick/sustain logic
   - prefer fake timers over real-time waits
+- **Detailed Strategy:**
+  - See [testing-strategy.md](file:///c:/Aldrin/projects/aldrinm/tamagotchi/specs/testing-strategy.md) for the full two-level validation plan.
 
 ### Guidelines
 

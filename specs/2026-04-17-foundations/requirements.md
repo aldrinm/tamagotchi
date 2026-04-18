@@ -32,16 +32,39 @@
 - Decision: Show only a baseline state indicator in Phase 0 UI.
   - Rationale: Satisfies placeholder feedback without prematurely designing full state visuals.
   - Tradeoff: `Sick` and `Evolved` visual differentiation is deferred to later state-focused work.
+- Decision: Lock deterministic state precedence for future gameplay phases.
+  - Rule: `Evolved` > `Sick` > `Normal`.
+  - Rationale: Removes ambiguity when multiple state conditions are true at once.
+  - Tradeoff: Future balancing must respect this precedence contract.
+- Decision: Standardize sustain windows as tick-timer based logic.
+  - Rule: Sustain windows always advance on ticks, not wall-clock timers.
+  - Rationale: Keeps timing behavior deterministic and aligned with tick cadence.
+  - Tradeoff: Sustained windows are quantized to tick resolution.
+- Decision: Standardize elapsed-time catch-up conversion with floor semantics.
+  - Rule: `elapsedTicks = floor(elapsedSeconds / TICK_INTERVAL_SECONDS)`.
+  - Rationale: Prevents fractional-tick ambiguity and keeps catch-up deterministic.
+  - Tradeoff: Partial intervals do not apply decay until a full tick interval has elapsed.
+- Decision: Make `Evolved` a terminal lifecycle state.
+  - Rule: Once evolved, the pet cannot de-evolve.
+  - Rationale: Establishes a clear lifecycle contract for progression.
+  - Tradeoff: Reversibility mechanics are intentionally excluded.
+- Decision: Standardize persisted datetime serialization format.
+  - Rule: Persist and parse datetime values using ISO 8601 format.
+  - Rationale: Ensures consistent, portable timestamp handling.
+  - Tradeoff: Parsing logic must reject or normalize non-ISO timestamp inputs.
 
 ## Constraints
 - Technical constraints from `specs/tech-stack.md`
   - Web app only using Angular 21.
   - No backend; no server persistence.
   - Local persistence (`localStorage`) is allowed but not required in this phase.
-  - Testing stack is `Jest` with deterministic handling for time-based logic in later phases.
+  - Testing stack is `Vitest` with deterministic handling for time-based logic in later phases.
+  - Cross-phase timing contract uses tick timers for sustain windows and floor conversion for elapsed-time catch-up.
+  - Cross-phase persistence contract uses ISO 8601 datetime format for stored/read timestamps.
 - Product constraints from defaults
   - No inventories, currencies, quests, or progression systems.
   - Maintain compatibility with the mission's 1-minute casual interaction target.
+  - Lifecycle contract: `Evolved` is terminal once reached.
 
 ## Open Questions
 - None currently. Phase 0 scope decisions are locked for implementation.
