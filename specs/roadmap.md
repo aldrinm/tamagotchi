@@ -30,7 +30,7 @@ Exit criteria:
 - Code compiles/runs.
 - You can render a pet UI with placeholder values.
 
-## Phase 1: Living Vitals (ticking meters)
+## Phase 1: Living Vitals (ticking meters) - Complete
 
 - Implement the decay/tick rule for `Hunger`, `Happiness`, and `Energy`.
 - Use default cadence:

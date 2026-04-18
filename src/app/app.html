@@ -1,7 +1,7 @@
 <main class="app-shell">
   <header>
-    <h1>{{ title }}</h1>
-    <p>Phase 0 foundations with placeholder vitals.</p>
+    <h1>Tamagotchi</h1>
+    <p>Phase 1: Living Vitals (Ticking Meters)</p>
   </header>
 
   <section class="pet-card" aria-label="Pet area">
@@ -9,9 +9,27 @@
     <p class="state-indicator" aria-label="Current pet state">State: {{ state }}</p>
 
     <ul class="vitals" aria-label="Pet vitals">
-      <li>Hunger: {{ stats.hunger }}</li>
-      <li>Happiness: {{ stats.happiness }}</li>
-      <li>Energy: {{ stats.energy }}</li>
+      <li>
+        <span>Hunger</span>
+        <div class="meter-container">
+          <div class="meter-bar" [style.width.%]="stats.hunger" aria-hidden="true"></div>
+        </div>
+        <span>{{ stats.hunger }}%</span>
+      </li>
+      <li>
+        <span>Happiness</span>
+        <div class="meter-container">
+          <div class="meter-bar" [style.width.%]="stats.happiness" aria-hidden="true"></div>
+        </div>
+        <span>{{ stats.happiness }}%</span>
+      </li>
+      <li>
+        <span>Energy</span>
+        <div class="meter-container">
+          <div class="meter-bar" [style.width.%]="stats.energy" aria-hidden="true"></div>
+        </div>
+        <span>{{ stats.energy }}%</span>
+      </li>
     </ul>
   </section>
 </main>

@@ -47,5 +47,36 @@ header p {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.vitals li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vitals li span:first-child {
+  width: 80px;
+  font-weight: 500;
+}
+
+.vitals li span:last-child {
+  width: 50px;
+  text-align: right;
+  font-family: monospace;
+}
+
+.meter-container {
+  flex: 1;
+  background: #eee;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.meter-bar {
+  background: #4caf50;
+  height: 100%;
+  transition: width 0.3s ease;
 }
