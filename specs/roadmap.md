@@ -63,7 +63,7 @@ Exit criteria:
 - Clicking/triggering each action updates the correct meters.
 - Meter updates are consistent (no negative/overflow values).
 
-## Phase 3: Dynamic States (Normal / Sick / Evolved)
+## Phase 3: Dynamic States (Normal / Sick / Evolved) - Complete
 
 - Implement a deterministic mapping from current stats to pet state:
   - `Normal` / `Sick` / `Evolved`
