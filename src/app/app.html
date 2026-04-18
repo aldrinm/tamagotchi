@@ -8,6 +8,17 @@
     <h2>{{ pet.name }}</h2>
     <p class="state-indicator" aria-label="Current pet state">State: {{ state }}</p>
 
+    <div class="pet-blob" [class]="'state-' + state.toLowerCase()" aria-hidden="true">
+      <div class="eyes" [class]="'eyes-' + eyeState()">
+        <div class="eye left"></div>
+        <div class="eye right"></div>
+      </div>
+      <div class="mouth" [class]="'mouth-' + mouthState()"></div>
+      @if (reactionText()) {
+        <div class="bubble">{{ reactionText() }}</div>
+      }
+    </div>
+
     <ul class="vitals" aria-label="Pet vitals">
       <li>
         <span>Hunger</span>

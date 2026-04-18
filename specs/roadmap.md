@@ -83,7 +83,7 @@ Exit criteria:
 - You can reproduce each state by manipulating stats.
 - State transitions feel immediate and predictable.
 
-## Phase 4: Personal Touches (quirky reactions)
+## Phase 4: Personal Touches (quirky reactions) - Complete
 
 - Add at least one “Easter egg” reaction per pillar:
   - feeding/play/rest triggers a small text/animation response

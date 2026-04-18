@@ -9,12 +9,18 @@ import {
   TICK_DECAY,
   TICK_INTERVAL_SECONDS,
 } from './game.constants';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should create the app', () => {
@@ -25,7 +31,7 @@ describe('App', () => {
 
   it('should render baseline pet shell', async () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Tamagotchi');
     expect(compiled.querySelector('h2')?.textContent).toContain('Pixel');
@@ -34,6 +40,65 @@ describe('App', () => {
     );
     expect(compiled.querySelector('[aria-label="Pet vitals"]')?.textContent).toContain('Hunger');
     expect(compiled.querySelector('[aria-label="Pet vitals"]')?.textContent).toContain('100%');
+  });
+
+  describe('Personal Touches (Reactions)', () => {
+    it('should show "Yum!" when feeding', () => {
+      const fixture = TestBed.createComponent(App);
+      const app = fixture.componentInstance;
+      
+      // Use protected access via casting to any for testing signals
+      (app as any).feed();
+      expect((app as any).reactionText()).toBe('Yum!');
+      expect((app as any).eyeState()).toBe('normal');
+      expect((app as any).mouthState()).toBe('yum');
+
+      vi.advanceTimersByTime(3000);
+      expect((app as any).reactionText()).toBe('');
+      expect((app as any).eyeState()).toBe('normal');
+      expect((app as any).mouthState()).toBe('normal');
+    });
+
+    it('should show "Wheee!" when playing', () => {
+      const fixture = TestBed.createComponent(App);
+      const app = fixture.componentInstance;
+
+      (app as any).play();
+      expect((app as any).reactionText()).toBe('Wheee!');
+      expect((app as any).eyeState()).toBe('happy');
+      expect((app as any).mouthState()).toBe('open');
+
+      vi.advanceTimersByTime(3000);
+      expect((app as any).reactionText()).toBe('');
+    });
+
+    it('should show "Zzz..." when resting', () => {
+      const fixture = TestBed.createComponent(App);
+      const app = fixture.componentInstance;
+
+      (app as any).rest();
+      expect((app as any).reactionText()).toBe('Zzz...');
+      expect((app as any).eyeState()).toBe('closed');
+      expect((app as any).mouthState()).toBe('zzz');
+
+      vi.advanceTimersByTime(3000);
+      expect((app as any).reactionText()).toBe('');
+    });
+
+    it('should override previous reaction if action is called again', () => {
+      const fixture = TestBed.createComponent(App);
+      const app = fixture.componentInstance;
+
+      (app as any).feed();
+      expect((app as any).reactionText()).toBe('Yum!');
+      
+      vi.advanceTimersByTime(1000); // Wait partially
+      (app as any).play();
+      expect((app as any).reactionText()).toBe('Wheee!'); // Overridden
+
+      vi.advanceTimersByTime(3000); // Wait for the new timeout
+      expect((app as any).reactionText()).toBe('');
+    });
   });
 });
 
