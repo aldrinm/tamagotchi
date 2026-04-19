@@ -1,7 +1,7 @@
 <main class="app-shell">
   <header>
     <h1>Tamagotchi</h1>
-    <p>Phase 3: Dynamic States (Normal / Sick / Evolved)</p>
+    <p>Phase 5: Quality Pass (Polish & Safeguards)</p>
   </header>
 
   <section class="pet-card" aria-label="Pet area">
@@ -51,9 +51,22 @@
     </ul>
 
     <div class="actions" aria-label="Pet actions">
-      <button (click)="feed()" aria-label="Feed the pet">Feed</button>
-      <button (click)="play()" aria-label="Play with the pet">Play</button>
-      <button (click)="rest()" aria-label="Let the pet rest">Rest</button>
+      <div class="action-wrapper">
+        <button (click)="feed()" [disabled]="!canFeed" aria-label="Feed the pet">Feed</button>
+        @if (!canFeed) { <small class="status-hint">Full!</small> }
+      </div>
+      <div class="action-wrapper">
+        <button (click)="play()" [disabled]="!canPlay" aria-label="Play with the pet">Play</button>
+        @if (!canPlay) { 
+          <small class="status-hint">
+            {{ state === 'Sick' ? 'Sick' : 'Tired' }}
+          </small> 
+        }
+      </div>
+      <div class="action-wrapper">
+        <button (click)="rest()" [disabled]="!canRest" aria-label="Let the pet rest">Rest</button>
+        @if (!canRest) { <small class="status-hint">Rested!</small> }
+      </div>
     </div>
   </section>
 </main>

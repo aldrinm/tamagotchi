@@ -38,6 +38,9 @@ export class App implements OnInit, OnDestroy {
   protected get pet() { return this.gameService.pet(); }
   protected get stats() { return this.gameService.stats(); }
   protected get state() { return this.gameService.state(); }
+  protected get canFeed() { return this.gameService.canFeed(); }
+  protected get canPlay() { return this.gameService.canPlay(); }
+  protected get canRest() { return this.gameService.canRest(); }
 
   protected feed(): void {
     this.gameService.feed();

@@ -59,15 +59,35 @@ export class GameService {
   }
 
   feed(): void {
-    this.applyActionDelta(ACTION_DELTAS.feed);
+    if (this.canFeed()) {
+      this.applyActionDelta(ACTION_DELTAS.feed);
+    }
   }
 
   play(): void {
-    this.applyActionDelta(ACTION_DELTAS.play);
+    if (this.canPlay()) {
+      this.applyActionDelta(ACTION_DELTAS.play);
+    }
   }
 
   rest(): void {
-    this.applyActionDelta(ACTION_DELTAS.rest);
+    if (this.canRest()) {
+      this.applyActionDelta(ACTION_DELTAS.rest);
+    }
+  }
+
+  canFeed(): boolean {
+    return this.stats().hunger < 100;
+  }
+
+  canPlay(): boolean {
+    const isHealthy = this.state() !== 'Sick';
+    const hasEnergy = this.stats().energy >= 10;
+    return isHealthy && hasEnergy;
+  }
+
+  canRest(): boolean {
+    return this.stats().energy < 100;
   }
 
   private applyActionDelta(delta: { hunger: number; happiness: number; energy: number }): void {

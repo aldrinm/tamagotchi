@@ -97,6 +97,44 @@ describe('GameService', () => {
       expect(service.stats().happiness).toBe(100);
       expect(service.stats().energy).toBe(100);
     });
+
+    it('should not allow feeding if hunger is already 100', () => {
+      // Ensure hunger is 100 (it may have been decayed by beforeEach)
+      while (service.canFeed()) {
+        service.feed();
+      }
+      vi.clearAllMocks();
+      service.feed();
+      expect(persistenceService.saveState).not.toHaveBeenCalled();
+    });
+
+    it('should not allow playing if sick', () => {
+      service.applyDecay(31); // Enter Sick
+      expect(service.state()).toBe('Sick');
+      vi.clearAllMocks();
+      service.play();
+      expect(persistenceService.saveState).not.toHaveBeenCalled();
+    });
+
+    it('should not allow playing if energy is below 10', () => {
+      // stats at ~50 from beforeEach decay of 25 ticks
+      // Apply more decay to energy specifically?
+      // 25 ticks * 1 energy decay = 25. 100 - 25 = 75.
+      // 100 ticks would be 0 energy.
+      service.applyDecay(70); 
+      expect(service.stats().energy).toBeLessThan(10);
+      vi.clearAllMocks();
+      service.play();
+      expect(persistenceService.saveState).not.toHaveBeenCalled();
+    });
+
+    it('should not allow resting if energy is already 100', () => {
+      for (let i = 0; i < 10; i++) service.rest();
+      expect(service.stats().energy).toBe(100);
+      vi.clearAllMocks();
+      service.rest();
+      expect(persistenceService.saveState).not.toHaveBeenCalled();
+    });
   });
 
   describe('Initialization', () => {
@@ -128,6 +166,36 @@ describe('GameService', () => {
       expect(initService.stats().hunger).toBe(96);
       expect(initService.stats().happiness).toBe(96);
       expect(initService.stats().energy).toBe(98);
+    });
+
+    it('should accurately catch up after long downtime (1 hour)', () => {
+      const now = Date.now();
+      const lastUpdate = new Date(now - 3600000).toISOString(); // 1 hour = 3600s = 720 ticks
+
+      const persistenceMock = {
+        saveState: vi.fn(),
+        loadState: vi.fn().mockReturnValue({
+          pet: { name: 'Pixel', evolutionName: '', recoveryFormName: '' },
+          stats: { hunger: 100, happiness: 100, energy: 100 },
+          state: 'Normal',
+          lastUpdatedAt: lastUpdate
+        }),
+      };
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          GameService,
+          { provide: PersistenceService, useValue: persistenceMock }
+        ]
+      });
+
+      const initService = TestBed.inject(GameService);
+      
+      // All stats should be 0 after 720 ticks
+      expect(initService.stats().hunger).toBe(0);
+      expect(initService.stats().happiness).toBe(0);
+      expect(initService.stats().energy).toBe(0);
     });
   });
 

@@ -94,7 +94,7 @@ Exit criteria:
 - There are distinct reactions tied to actions and/or state changes.
 - The pet still functions fully without the easter eggs.
 
-## Phase 5: Quality Pass (polish without scope creep)
+## Phase 5: Quality Pass (polish without scope creep) - Complete
 
 - Tune tick/action/state thresholds for “fun” pacing.
 - Apply the [Testing Strategy](file:///c:/Aldrin/projects/aldrinm/tamagotchi/specs/testing-strategy.md) (Automated + Manual).
