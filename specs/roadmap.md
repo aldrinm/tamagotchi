@@ -108,7 +108,7 @@ Exit criteria:
 - Game loop feels stable and responsive.
 - No new systems that conflict with “no inventories/no currencies”.
 
-## Phase 6: Visual Evolution (Advanced Aesthetics)
+## Phase 6: Visual Evolution (Advanced Aesthetics) - Complete
 
 - Enhance the `Evolved` state with distinct visual features:
   - Unique blob shape (more structured/majestic).
