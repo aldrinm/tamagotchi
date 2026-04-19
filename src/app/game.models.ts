@@ -17,5 +17,7 @@ export interface GameSnapshot {
   stats: Stats;
   state: PetState;
   lastUpdatedAt: string;
+  evolveSustainTicks: number;
+  recoverySustainTicks: number;
 }
 

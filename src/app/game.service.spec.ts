@@ -130,4 +130,71 @@ describe('GameService', () => {
       expect(initService.stats().energy).toBe(98);
     });
   });
+
+  describe('State Transitions', () => {
+    it('should transition to Sick if any vital falls below 40', () => {
+      // stats: 100, 100, 100
+      // GOOD_RANGE_MIN = 40
+      // TICK_DECAY = -2, -2, -1
+      // To get hunger < 40, we need (100 - 40) / 2 = 30 ticks + 1 = 31 ticks
+      service.applyDecay(31);
+      expect(service.state()).toBe('Sick');
+    });
+
+    it('should recover to Normal after sustained health (15s = 3 ticks)', () => {
+      service.applyDecay(31); // Enter Sick
+      expect(service.state()).toBe('Sick');
+
+      // Feed to get back in good range
+      service.feed();
+      service.feed(); // Hunger should be > 40 now
+      expect(service.stats().hunger).toBeGreaterThanOrEqual(40);
+      expect(service.state()).toBe('Sick'); // Still sick, needs sustain
+
+      // Apply 3 ticks of decay (but keep stats > 40)
+      // Feed more to be safe
+      for (let i = 0; i < 5; i++) service.feed();
+      
+      service.applyDecay(1);
+      expect(service.state()).toBe('Sick');
+      service.applyDecay(1);
+      expect(service.state()).toBe('Sick');
+      service.applyDecay(1);
+      expect(service.state()).toBe('Normal');
+    });
+
+    it('should transition to Evolved after sustained high vitals (15s = 3 ticks)', () => {
+      // stats start at 100
+      // EVOLVE_THRESHOLD = 90
+      // 1 tick decay (98, 98, 99)
+      service.applyDecay(1);
+      expect(service.state()).toBe('Normal');
+      
+      service.applyDecay(1);
+      expect(service.state()).toBe('Normal');
+      
+      service.applyDecay(1);
+      expect(service.state()).toBe('Evolved');
+    });
+
+    it('should not de-evolve once Evolved', () => {
+      service.applyDecay(3); // Evolve
+      expect(service.state()).toBe('Evolved');
+
+      service.applyDecay(100); // Massive decay
+      expect(service.stats().hunger).toBe(0);
+      expect(service.state()).toBe('Evolved'); // Still evolved
+    });
+
+    it('should persist sustain counters', () => {
+      service.applyDecay(2); // 2 ticks of high vitals
+      expect(service.state()).toBe('Normal');
+
+      // Check if saveState was called with counters
+      expect(persistenceService.saveState).toHaveBeenCalledWith(expect.objectContaining({
+        evolveSustainTicks: 2,
+        state: 'Normal'
+      }));
+    });
+  });
 });

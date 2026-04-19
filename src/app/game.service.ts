@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Pet, PetState, Stats, GameSnapshot } from './game.models';
-import { TICK_INTERVAL_SECONDS, TICK_DECAY, ACTION_DELTAS } from './game.constants';
+import { TICK_INTERVAL_SECONDS, TICK_DECAY, ACTION_DELTAS, EVOLVE_THRESHOLD, EVOLVE_SUSTAIN_SECONDS, GOOD_RANGE_MIN, RECOVERY_SUSTAIN_SECONDS } from './game.constants';
 import { PersistenceService } from './persistence.service';
 
 @Injectable({
@@ -22,6 +22,9 @@ export class GameService {
   readonly state = signal<PetState>('Normal');
   readonly lastUpdatedAt = signal<string>(new Date().toISOString());
 
+  private evolveSustainTicks = 0;
+  private recoverySustainTicks = 0;
+
   constructor(private persistenceService: PersistenceService) {
     this.initialize();
   }
@@ -42,6 +45,9 @@ export class GameService {
 
       if (elapsedTicks > 0) {
         this.applyDecay(elapsedTicks);
+      } else {
+        this.evolveSustainTicks = saved.evolveSustainTicks ?? 0;
+        this.recoverySustainTicks = saved.recoverySustainTicks ?? 0;
       }
     } else {
       this.save();
@@ -74,6 +80,7 @@ export class GameService {
 
     this.stats.set(next);
     this.lastUpdatedAt.set(new Date().toISOString());
+    this.updateState(0);
     this.save();
   }
 
@@ -87,7 +94,57 @@ export class GameService {
 
     this.stats.set(next);
     this.lastUpdatedAt.set(new Date().toISOString());
+    this.updateState(ticks);
     this.save();
+  }
+
+  private updateState(ticks: number): void {
+    const current = this.stats();
+    const currentState = this.state();
+
+    if (currentState === 'Evolved') {
+      return;
+    }
+
+    // Rule: Sick activates when ANY vital falls below GOOD_RANGE_MIN
+    const isBelowGoodRange =
+      current.hunger < GOOD_RANGE_MIN ||
+      current.happiness < GOOD_RANGE_MIN ||
+      current.energy < GOOD_RANGE_MIN;
+
+    if (isBelowGoodRange) {
+      if (currentState !== 'Sick') {
+        this.state.set('Sick');
+      }
+      this.evolveSustainTicks = 0;
+      this.recoverySustainTicks = 0;
+      return;
+    }
+
+    // Rule: Evolved activates when ALL vitals >= EVOLVE_THRESHOLD for EVOLVE_SUSTAIN_SECONDS
+    const isAboveEvolveThreshold =
+      current.hunger >= EVOLVE_THRESHOLD &&
+      current.happiness >= EVOLVE_THRESHOLD &&
+      current.energy >= EVOLVE_THRESHOLD;
+
+    if (isAboveEvolveThreshold) {
+      this.evolveSustainTicks += ticks;
+      if (this.evolveSustainTicks * TICK_INTERVAL_SECONDS >= EVOLVE_SUSTAIN_SECONDS) {
+        this.state.set('Evolved');
+      }
+    } else {
+      this.evolveSustainTicks = 0;
+    }
+
+    // Rule: Normal recovery activates only after ALL vitals back in good range for RECOVERY_SUSTAIN_SECONDS
+    if (currentState === 'Sick' && !isBelowGoodRange) {
+      this.recoverySustainTicks += ticks;
+      if (this.recoverySustainTicks * TICK_INTERVAL_SECONDS >= RECOVERY_SUSTAIN_SECONDS) {
+        this.state.set('Normal');
+      }
+    } else {
+      this.recoverySustainTicks = 0;
+    }
   }
 
   private clamp(value: number): number {
@@ -100,6 +157,8 @@ export class GameService {
       stats: this.stats(),
       state: this.state(),
       lastUpdatedAt: this.lastUpdatedAt(),
+      evolveSustainTicks: this.evolveSustainTicks,
+      recoverySustainTicks: this.recoverySustainTicks,
     });
   }
 }
