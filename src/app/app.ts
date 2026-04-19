@@ -1,10 +1,11 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { GameService } from './game.service';
 import { TICK_INTERVAL_SECONDS } from './game.constants';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

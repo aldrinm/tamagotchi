@@ -1,14 +1,21 @@
 <main class="app-shell">
   <header>
     <h1>Tamagotchi</h1>
-    <p>Phase 2: Care Loop (Feed / Play / Rest)</p>
+    <p>Phase 3: Dynamic States (Normal / Sick / Evolved)</p>
   </header>
 
   <section class="pet-card" aria-label="Pet area">
     <h2>{{ pet.name }}</h2>
-    <p class="state-indicator" aria-label="Current pet state">State: {{ state }}</p>
+    <p class="state-indicator" [class.state-sick]="state === 'Sick'" aria-label="Current pet state">State: {{ state }}</p>
 
     <div class="pet-blob" [class]="'state-' + state.toLowerCase()" aria-hidden="true">
+      @if (state === 'Evolved') {
+        <div class="hair-container">
+          <div class="hair"></div>
+          <div class="hair"></div>
+          <div class="hair"></div>
+        </div>
+      }
       <div class="eyes" [class]="'eyes-' + eyeState()">
         <div class="eye left"></div>
         <div class="eye right"></div>
