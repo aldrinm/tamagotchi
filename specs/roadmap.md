@@ -108,3 +108,45 @@ Exit criteria:
 - Game loop feels stable and responsive.
 - No new systems that conflict with “no inventories/no currencies”.
 
+## Phase 6: Visual Evolution (Advanced Aesthetics)
+
+- Enhance the `Evolved` state with distinct visual features:
+  - Unique blob shape (more structured/majestic).
+  - "Random" hair strands using CSS.
+  - Subtle glow/aura effect.
+- Ensure transitions are smooth and only trigger when state is `Evolved`.
+
+Exit criteria:
+- The pet looks clearly different and more "advanced" in the evolved state.
+- No visual regressions in `Normal` or `Sick` states.
+
+## Phase 7: Sickness Visibility & Health Status
+
+- Enhance the `Sick` state with high-visibility UI elements:
+  - Greenish or pale color shift for the pet blob.
+  - "Shivering" micro-animation to indicate distress.
+  - Floating status icons (e.g., thermometer `🌡️` or dizzy `💫` symbols).
+- Add a dedicated "Health Status" indicator:
+  - A prominent status badge that changes from "Healthy" (green) to "Ill" (red).
+  - Pulse animation on the badge when the pet is in the `Sick` state.
+- Improve the visual transition when the pet enters or leaves the `Sick` state.
+
+Exit criteria:
+- The pet's sickness is immediately obvious through visual cues.
+- The health status indicator provides clear, at-a-glance feedback on the pet's condition.
+
+## Phase 8: Naming & Rebirth
+
+- Initial Naming Flow:
+  - Implement a "Welcome" screen that appears only if the pet hasn't been named yet.
+  - Allow the user to choose a name for their pet.
+  - Once set, the name is permanent for the current lifecycle.
+- Reset/Restart System:
+  - Add a "Reset Game" button (typically in a footer or settings area).
+  - Implement a confirmation prompt ("Are you sure you want to start over? All progress will be lost.") to prevent accidental resets.
+  - Upon confirmation, clear all saved data and return to the Naming Flow.
+
+Exit criteria:
+- First-time users are prompted to name their pet.
+- Users can successfully reset the game and start fresh after confirming the action.
+
