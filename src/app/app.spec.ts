@@ -38,6 +38,7 @@ describe('App', () => {
     expect(compiled.querySelector('[aria-label="Current pet state"]')?.textContent).toContain(
       'State: Normal',
     );
+    expect(compiled.querySelector('.health-badge')?.textContent).toContain('Healthy');
     expect(compiled.querySelector('[aria-label="Pet vitals"]')?.textContent).toContain('Hunger');
     expect(compiled.querySelector('[aria-label="Pet vitals"]')?.textContent).toContain('100%');
   });

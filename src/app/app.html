@@ -1,15 +1,26 @@
 <main class="app-shell">
   <header>
     <h1>Tamagotchi</h1>
-    <p>Phase 6: Visual Evolution (Advanced Aesthetics)</p>
+    <p>Phase 7: Sickness Visibility & Health Status</p>
   </header>
 
   <section class="pet-card" aria-label="Pet area">
-    <h2>{{ pet.name }}</h2>
-    <p class="state-indicator" [class.state-sick]="state === 'Sick'" aria-label="Current pet state">State: {{ state }}</p>
+    <div class="health-status">
+      <h2>{{ pet.name }}</h2>
+      <div class="health-badge" [class.healthy]="!isSick" [class.ill]="isSick" aria-live="polite">
+        {{ isSick ? 'Ill' : 'Healthy' }}
+      </div>
+    </div>
+    <p class="state-indicator" [class.state-sick]="isSick" aria-label="Current pet state">State: {{ stateText }}</p>
 
-    <div class="pet-blob" [class]="'state-' + state.toLowerCase()" aria-hidden="true">
-      @if (state === 'Evolved') {
+    <div class="pet-blob" [class.state-sick]="isSick" [class.state-evolved]="isEvolved" aria-hidden="true">
+      @if (isSick) {
+        <div class="floating-icons">
+          <span class="floating-icon thermometer">🌡️</span>
+          <span class="floating-icon dizzy">💫</span>
+        </div>
+      }
+      @if (isEvolved) {
         <div class="hair-container">
           <div class="hair"></div>
           <div class="hair"></div>
@@ -20,7 +31,7 @@
         <div class="eye left"></div>
         <div class="eye right"></div>
       </div>
-      <div class="mouth" [class]="'mouth-' + mouthState()"></div>
+      <div class="mouth" [class]="'mouth-' + mouthState()" [class.mouth-sick]="isSick"></div>
       @if (reactionText()) {
         <div class="bubble">{{ reactionText() }}</div>
       }
@@ -56,11 +67,9 @@
         @if (!canFeed) { <small class="status-hint">Full!</small> }
       </div>
       <div class="action-wrapper">
-        <button (click)="play()" [disabled]="!canPlay" aria-label="Play with the pet">Play</button>
+        <button (click)="play()" [disabled]="!canPlay" aria-label="Play with the pet">{{ playActionLabel }}</button>
         @if (!canPlay) { 
-          <small class="status-hint">
-            {{ state === 'Sick' ? 'Sick' : 'Tired' }}
-          </small> 
+          <small class="status-hint">Tired</small> 
         }
       </div>
       <div class="action-wrapper">

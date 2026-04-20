@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Pet, PetState, Stats, GameSnapshot } from './game.models';
+import { Pet, Stats, GameSnapshot } from './game.models';
 import { TICK_INTERVAL_SECONDS, TICK_DECAY, ACTION_DELTAS, EVOLVE_THRESHOLD, EVOLVE_SUSTAIN_SECONDS, GOOD_RANGE_MIN, RECOVERY_SUSTAIN_SECONDS } from './game.constants';
 import { PersistenceService } from './persistence.service';
 
@@ -19,7 +19,8 @@ export class GameService {
     recoveryFormName: 'Pixel',
   });
 
-  readonly state = signal<PetState>('Normal');
+  readonly isSick = signal<boolean>(false);
+  readonly isEvolved = signal<boolean>(false);
   readonly lastUpdatedAt = signal<string>(new Date().toISOString());
 
   private evolveSustainTicks = 0;
@@ -33,7 +34,8 @@ export class GameService {
     const saved = this.persistenceService.loadState();
     if (saved) {
       this.pet.set(saved.pet);
-      this.state.set(saved.state);
+      this.isSick.set(saved.isSick);
+      this.isEvolved.set(saved.isEvolved);
       this.stats.set(saved.stats);
       this.lastUpdatedAt.set(saved.lastUpdatedAt);
 
@@ -81,9 +83,7 @@ export class GameService {
   }
 
   canPlay(): boolean {
-    const isHealthy = this.state() !== 'Sick';
-    const hasEnergy = this.stats().energy >= 10;
-    return isHealthy && hasEnergy;
+    return this.stats().energy >= 10;
   }
 
   canRest(): boolean {
@@ -120,11 +120,6 @@ export class GameService {
 
   private updateState(ticks: number): void {
     const current = this.stats();
-    const currentState = this.state();
-
-    if (currentState === 'Evolved') {
-      return;
-    }
 
     // Rule: Sick activates when ANY vital falls below GOOD_RANGE_MIN
     const isBelowGoodRange =
@@ -133,37 +128,36 @@ export class GameService {
       current.energy < GOOD_RANGE_MIN;
 
     if (isBelowGoodRange) {
-      if (currentState !== 'Sick') {
-        this.state.set('Sick');
-      }
-      this.evolveSustainTicks = 0;
+      this.isSick.set(true);
       this.recoverySustainTicks = 0;
-      return;
+    } else {
+      // Rule: Normal recovery activates only after ALL vitals back in good range for RECOVERY_SUSTAIN_SECONDS
+      if (this.isSick()) {
+        this.recoverySustainTicks += ticks;
+        if (this.recoverySustainTicks * TICK_INTERVAL_SECONDS >= RECOVERY_SUSTAIN_SECONDS) {
+          this.isSick.set(false);
+          this.recoverySustainTicks = 0;
+        }
+      } else {
+        this.recoverySustainTicks = 0;
+      }
     }
 
     // Rule: Evolved activates when ALL vitals >= EVOLVE_THRESHOLD for EVOLVE_SUSTAIN_SECONDS
-    const isAboveEvolveThreshold =
-      current.hunger >= EVOLVE_THRESHOLD &&
-      current.happiness >= EVOLVE_THRESHOLD &&
-      current.energy >= EVOLVE_THRESHOLD;
+    if (!this.isEvolved()) {
+      const isAboveEvolveThreshold =
+        current.hunger >= EVOLVE_THRESHOLD &&
+        current.happiness >= EVOLVE_THRESHOLD &&
+        current.energy >= EVOLVE_THRESHOLD;
 
-    if (isAboveEvolveThreshold) {
-      this.evolveSustainTicks += ticks;
-      if (this.evolveSustainTicks * TICK_INTERVAL_SECONDS >= EVOLVE_SUSTAIN_SECONDS) {
-        this.state.set('Evolved');
+      if (isAboveEvolveThreshold) {
+        this.evolveSustainTicks += ticks;
+        if (this.evolveSustainTicks * TICK_INTERVAL_SECONDS >= EVOLVE_SUSTAIN_SECONDS) {
+          this.isEvolved.set(true);
+        }
+      } else {
+        this.evolveSustainTicks = 0;
       }
-    } else {
-      this.evolveSustainTicks = 0;
-    }
-
-    // Rule: Normal recovery activates only after ALL vitals back in good range for RECOVERY_SUSTAIN_SECONDS
-    if (currentState === 'Sick' && !isBelowGoodRange) {
-      this.recoverySustainTicks += ticks;
-      if (this.recoverySustainTicks * TICK_INTERVAL_SECONDS >= RECOVERY_SUSTAIN_SECONDS) {
-        this.state.set('Normal');
-      }
-    } else {
-      this.recoverySustainTicks = 0;
     }
   }
 
@@ -175,7 +169,8 @@ export class GameService {
     this.persistenceService.saveState({
       pet: this.pet(),
       stats: this.stats(),
-      state: this.state(),
+      isSick: this.isSick(),
+      isEvolved: this.isEvolved(),
       lastUpdatedAt: this.lastUpdatedAt(),
       evolveSustainTicks: this.evolveSustainTicks,
       recoverySustainTicks: this.recoverySustainTicks,

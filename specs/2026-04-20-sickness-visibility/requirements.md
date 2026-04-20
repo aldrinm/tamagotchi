@@ -7,16 +7,9 @@
 
 ## Scope
 ### In scope
-- **Pet Visuals in `Sick` state**:
-  - Greenish/pale color shift for the blob.
-  - Shivering micro-animation (constant while in `Sick` state).
-  - Floating status icons (🌡️, 💫) that appear and disappear randomly.
-  - **Sick mouth UI**: A downturned/unhappy mouth shape that triggers automatically when sick.
-- **Health Status Indicator**:
-  - A prominent status badge ("Healthy" vs "Ill").
-  - Pulse animation on the badge when `Sick`.
-- **Transitions**:
-  - Smooth transitions between `Normal` and `Sick` visuals.
+- **Sickness/Evolution Independence**: Split state logic into independent flags (`isSick`, `isEvolved`) to allow both states to coexist.
+- **"Cuddle" Action**: Renamed/Enabled "Play" action as "Cuddle" when sick to ensure recovery is possible (fixing the soft-lock).
+- **Bug Fixes**: Resolved CSS overwriting issues that caused the pet to disappear during state transitions.
 
 ### Out of scope
 - Specific medicines or items (no inventories).

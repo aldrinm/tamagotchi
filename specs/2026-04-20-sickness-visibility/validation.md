@@ -1,12 +1,13 @@
 # Validation - Sickness Visibility & Health Status
 
 ## Success Criteria
-- The pet blob turns greenish/pale when the state is `Sick`.
-- The pet blob shivers when the state is `Sick`.
-- Floating icons (🌡️, 💫) are visible only in the `Sick` state.
-- The pet shows a downturned mouth shape when `Sick`.
-- A "Health Status" badge shows "Healthy" (green) in `Normal`/`Evolved` and "Ill" (red) in `Sick`.
+- The pet blob turns greenish/pale when `isSick` is true, regardless of evolution status.
+- The pet blob shivers when `isSick` is true.
+- Floating icons (🌡️, 💫) are visible only when `isSick` is true.
+- The pet shows a downturned mouth shape when `isSick`.
+- A "Health Status" badge shows "Healthy" (green) when healthy and "Ill" (red) when `isSick`.
 - The "Ill" badge pulses rhythmically.
+- The "Play" action becomes "Cuddle" when sick, allowing for recovery.
 - Visuals revert to healthy states when the pet recovers.
 
 ## Verification Checklist
@@ -19,6 +20,6 @@
 - [ ] Automated tests confirm CSS classes are applied correctly based on state.
 
 ## Test Plan
-1. **Happy Path (Recovery)**: Force the pet into `Sick` state (e.g., set Hunger to 20). Verify all sick visuals. Feed the pet until all vitals are > 40. Wait for recovery sustain window (15s). Verify all visuals return to healthy state.
-2. **Persistence**: Set pet to `Sick`. Reload page. Verify sick visuals are still present.
-3. **Evolved Priority**: Ensure that even if vitals are low, if the pet is already `Evolved`, it does not show sick visuals (as per precedence rules `Evolved` > `Sick`). *Note: Actually, once evolved, it's terminal, but I should double check if it can still get sick. The mission says "once evolved, the pet cannot de-evolve".*
+1. **Happy Path (Recovery)**: Force the pet into `isSick` state (e.g., set Hunger to 20). Verify the "Play" button becomes "Cuddle". Cuddle/Feed the pet until all vitals are > 40. Wait for recovery sustain window (15s). Verify all visuals return to healthy state.
+2. **Persistence**: Set pet to `isSick`. Reload page. Verify sick visuals are still present.
+3. **Coexistence**: Evolve the pet, then lower vitals to trigger sickness. Verify the pet shows both evolved hair/glow AND sick color/shiver.

@@ -37,10 +37,23 @@ export class App implements OnInit, OnDestroy {
   // Exposed for template convenience
   protected get pet() { return this.gameService.pet(); }
   protected get stats() { return this.gameService.stats(); }
-  protected get state() { return this.gameService.state(); }
+  protected get isSick() { return this.gameService.isSick(); }
+  protected get isEvolved() { return this.gameService.isEvolved(); }
+  protected get stateText() {
+    const sick = this.isSick;
+    const evolved = this.isEvolved;
+    if (evolved && sick) return 'Evolved (Sick)';
+    if (evolved) return 'Evolved';
+    if (sick) return 'Sick';
+    return 'Normal';
+  }
   protected get canFeed() { return this.gameService.canFeed(); }
   protected get canPlay() { return this.gameService.canPlay(); }
   protected get canRest() { return this.gameService.canRest(); }
+
+  protected get playActionLabel() {
+    return this.isSick ? 'Cuddle' : 'Play';
+  }
 
   protected feed(): void {
     this.gameService.feed();

@@ -120,7 +120,7 @@ Exit criteria:
 - The pet looks clearly different and more "advanced" in the evolved state.
 - No visual regressions in `Normal` or `Sick` states.
 
-## Phase 7: Sickness Visibility & Health Status
+## Phase 7: Sickness Visibility & Health Status - Complete
 
 - Enhance the `Sick` state with high-visibility UI elements:
   - Greenish or pale color shift for the pet blob.
