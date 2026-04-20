@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { GameService } from './game.service';
 import { TICK_INTERVAL_SECONDS } from './game.constants';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -18,6 +19,9 @@ export class App implements OnInit, OnDestroy {
   protected readonly reactionText = signal<string>('');
   protected readonly eyeState = signal<'normal' | 'happy' | 'closed'>('normal');
   protected readonly mouthState = signal<'normal' | 'yum' | 'zzz' | 'open'>('normal');
+
+  // Naming state
+  protected petNameInput = '';
 
   ngOnInit(): void {
     this.tickInterval = setInterval(() => {
@@ -50,6 +54,20 @@ export class App implements OnInit, OnDestroy {
   protected get canFeed() { return this.gameService.canFeed(); }
   protected get canPlay() { return this.gameService.canPlay(); }
   protected get canRest() { return this.gameService.canRest(); }
+  protected get isNamed() { return this.gameService.pet().name !== ''; }
+
+  protected setName(): void {
+    if (this.petNameInput.trim()) {
+      this.gameService.setPetName(this.petNameInput.trim());
+    }
+  }
+
+  protected resetGame(): void {
+    if (window.confirm('Are you sure you want to start over? All progress will be lost.')) {
+      this.gameService.resetGame();
+      this.petNameInput = '';
+    }
+  }
 
   protected get playActionLabel() {
     return this.isSick ? 'Cuddle' : 'Play';

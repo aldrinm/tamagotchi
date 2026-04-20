@@ -14,7 +14,7 @@ export class GameService {
   });
 
   readonly pet = signal<Pet>({
-    name: 'Pixel',
+    name: '',
     evolutionName: 'Nova Pixel',
     recoveryFormName: 'Pixel',
   });
@@ -58,6 +58,24 @@ export class GameService {
 
   tick(): void {
     this.applyDecay(1);
+  }
+
+  setPetName(name: string): void {
+    this.pet.update(p => ({ ...p, name }));
+    this.save();
+  }
+
+  resetGame(): void {
+    this.persistenceService.clearState();
+    // Reset signals to defaults
+    this.stats.set({ hunger: 100, happiness: 100, energy: 100 });
+    this.pet.set({ name: '', evolutionName: 'Nova Pixel', recoveryFormName: 'Pixel' });
+    this.isSick.set(false);
+    this.isEvolved.set(false);
+    this.lastUpdatedAt.set(new Date().toISOString());
+    this.evolveSustainTicks = 0;
+    this.recoverySustainTicks = 0;
+    this.save();
   }
 
   feed(): void {

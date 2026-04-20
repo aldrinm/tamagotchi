@@ -135,7 +135,7 @@ Exit criteria:
 - The pet's sickness is immediately obvious through visual cues.
 - The health status indicator provides clear, at-a-glance feedback on the pet's condition.
 
-## Phase 8: Naming & Rebirth
+## Phase 8: Naming & Rebirth - Complete
 
 - Initial Naming Flow:
   - Implement a "Welcome" screen that appears only if the pet hasn't been named yet.

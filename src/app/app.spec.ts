@@ -34,7 +34,7 @@ describe('App', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Tamagotchi');
-    expect(compiled.querySelector('h2')?.textContent).toContain('Pixel');
+    expect(compiled.querySelector('h2')?.textContent).toContain('Who are you?');
     expect(compiled.querySelector('[aria-label="Current pet state"]')?.textContent).toContain(
       'State: Normal',
     );

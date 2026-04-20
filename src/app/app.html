@@ -1,12 +1,16 @@
 <main class="app-shell">
   <header>
-    <h1>Tamagotchi</h1>
-    <p>Phase 7: Sickness Visibility & Health Status</p>
+    <h1>{{ isNamed ? pet.name : 'Tamagotchi' }}</h1>
+    @if (isNamed) {
+      <p>Digital Companion</p>
+    } @else {
+      <p>Welcome to your new journey!</p>
+    }
   </header>
 
   <section class="pet-card" aria-label="Pet area">
     <div class="health-status">
-      <h2>{{ pet.name }}</h2>
+      <h2>{{ isNamed ? 'Status' : 'Who are you?' }}</h2>
       <div class="health-badge" [class.healthy]="!isSick" [class.ill]="isSick" aria-live="polite">
         {{ isSick ? 'Ill' : 'Healthy' }}
       </div>
@@ -63,19 +67,44 @@
 
     <div class="actions" aria-label="Pet actions">
       <div class="action-wrapper">
-        <button (click)="feed()" [disabled]="!canFeed" aria-label="Feed the pet">Feed</button>
-        @if (!canFeed) { <small class="status-hint">Full!</small> }
+        <button (click)="feed()" [disabled]="!canFeed || !isNamed" aria-label="Feed the pet">Feed</button>
+        @if (!canFeed && isNamed) { <small class="status-hint">Full!</small> }
       </div>
       <div class="action-wrapper">
-        <button (click)="play()" [disabled]="!canPlay" aria-label="Play with the pet">{{ playActionLabel }}</button>
-        @if (!canPlay) { 
+        <button (click)="play()" [disabled]="!canPlay || !isNamed" aria-label="Play with the pet">{{ playActionLabel }}</button>
+        @if (!canPlay && isNamed) { 
           <small class="status-hint">Tired</small> 
         }
       </div>
       <div class="action-wrapper">
-        <button (click)="rest()" [disabled]="!canRest" aria-label="Let the pet rest">Rest</button>
-        @if (!canRest) { <small class="status-hint">Rested!</small> }
+        <button (click)="rest()" [disabled]="!canRest || !isNamed" aria-label="Let the pet rest">Rest</button>
+        @if (!canRest && isNamed) { <small class="status-hint">Rested!</small> }
       </div>
     </div>
   </section>
+
+  @if (!isNamed) {
+    <div class="naming-overlay">
+      <div class="naming-modal">
+        <h2>Adopt a Friend</h2>
+        <p>Give your new companion a name to begin.</p>
+        <div class="input-group">
+          <input 
+            type="text" 
+            [(ngModel)]="petNameInput" 
+            placeholder="Pet name..." 
+            maxlength="50"
+            (keyup.enter)="setName()"
+            aria-label="Pet name input"
+          >
+          <button (click)="setName()" [disabled]="!petNameInput.trim()">Start Journey</button>
+        </div>
+        <small>{{ petNameInput.length }}/50</small>
+      </div>
+    </div>
+  }
+
+  <footer class="app-footer">
+    <button class="reset-btn" (click)="resetGame()" aria-label="Reset the game">Reset Game</button>
+  </footer>
 </main>
