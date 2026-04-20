@@ -25,7 +25,7 @@ export const ACTION_DELTAS = {
 } as const;
 
 export const EVOLVE_THRESHOLD = 90;
-export const EVOLVE_SUSTAIN_SECONDS = 15;
+export const EVOLVE_SUSTAIN_SECONDS = 30;
 export const GOOD_RANGE_MIN = 40;
 export const RECOVERY_SUSTAIN_SECONDS = 15;
 
